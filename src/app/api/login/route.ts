@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   };
 
   const accessToken = jwt.sign(payload, ACCESS_TOKEN, { expiresIn: "1d" });
-  const refreshToken = jwt.sign(payload, ACCESS_TOKEN, { expiresIn: "5s" });
+  const refreshToken = jwt.sign(payload, REFRESH_TOKEN, { expiresIn: "5s" });
 
   return Response.json(
     {
