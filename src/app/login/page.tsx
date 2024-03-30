@@ -1,6 +1,7 @@
 "use client";
 import { useFormState, useFormStatus } from "react-dom";
 import { login } from "./actions";
+import { useEffect, useState } from "react";
 
 function Submit() {
   const { pending } = useFormStatus();
@@ -19,7 +20,23 @@ function Submit() {
 }
 
 export default function Login() {
+  type errors = { username: string; password: string };
   const [state, formAction] = useFormState(login, null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({} as errors);
+
+  const validateForm = () => {
+    let errors: errors = {} as errors;
+
+    if (username.length >= 1 && username.length < 4) {
+      errors.username = "Username must contain more than 3 letters";
+    }
+
+    setErrors(errors);
+  };
+
+  useEffect(validateForm, [username, password]);
 
   return (
     <div className="h-[100vh] bg-gray-100">
@@ -32,16 +49,26 @@ export default function Login() {
                 Username
               </label>
               <input
+                required
                 type="text"
                 name="username"
                 className="w-full h-8 p-2 border border-gray-300 rounded-md"
+                onChange={(e) => {
+                  setTimeout(() => {
+                    setUsername(e.target.value);
+                  }, 1500);
+                }}
               />
+              {errors.username && (
+                <span className="text-red-400">{errors.username}</span>
+              )}
             </div>
             <div className="mb-5">
               <label htmlFor="password" className="block text-sm mb-1">
                 Password
               </label>
               <input
+                required
                 type="password"
                 name="password"
                 className="w-full h-8 p-2 border border-gray-300 rounded-md"

@@ -4,6 +4,7 @@ export const users = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }).notNull(),
   username: text("username").notNull().unique(),
   passwordHash: text("pasword_hash").notNull(),
+  jwtRefreshToken: text("jwt_refresh_token")
 });
 
 export type User = typeof users.$inferSelect;

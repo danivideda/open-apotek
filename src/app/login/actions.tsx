@@ -1,15 +1,20 @@
 "use server";
-import { revalidatePath } from "next/cache";
+
+import { zfd } from "zod-form-data";
+import { handleAuth } from "../lib/auth";
 
 export async function login(prevState: any, formData: FormData) {
-  await new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {
-    console.log("1 second has passed");
+  const schema = zfd.formData({
+    username: zfd.text(),
+    password: zfd.text(),
   });
-  const data = {
-    username: formData.get("username"),
-    password: formData.get("password"),
-  };
 
-  revalidatePath("/login");
-  return `Username: ${data.username} and password: ${data.password}`;
+  const zodParsed = schema.safeParse(formData);
+  if (zodParsed.success) {
+    const { username, password } = zodParsed.data;
+    const response = await handleAuth(username, password);
+    return `User: ${username} successfully logged in. Message: ${response}`;
+  }
+
+return zodParsed.error.message
 }
