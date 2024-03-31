@@ -7,8 +7,11 @@ import * as argon2 from "argon2";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { NextResponse } from "next/server";
+import { artificialDelay } from "../lib/utils";
 
 export async function register(prevState: any, formData: FormData) {
+  await artificialDelay(500);
+
   const schema = z.object({
     username: z.string().min(4),
     password: z.string().min(4),
