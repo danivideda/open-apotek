@@ -3,21 +3,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { login } from "./actions";
 import { useEffect, useState } from "react";
 
-function Submit() {
-  const { pending } = useFormStatus();
-  return (
-    <div>
-      <button
-        type="submit"
-        className="text-center bg-black text-white p-2 w-full rounded-md"
-        disabled={pending}
-      >
-        Masuk
-      </button>
-      {pending && <h1 className="text-md font-semibold mb-5">Loading...</h1>}
-    </div>
-  );
-}
+type errors = { username: string; password: string };
 
 export default function Login({
   searchParams,
@@ -29,15 +15,32 @@ export default function Login({
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({} as errors);
+  const [isValid, setIsValid] = useState(false);
 
   const validateForm = () => {
     let errors: errors = {} as errors;
 
     if (username.length >= 1 && username.length < 4) {
-      errors.username = "Username must contain more than 3 letters";
+      errors.username = "Username must contain at least 4 character(s)";
     }
 
-    setErrors(errors);
+    if (password.length >= 1 && password.length < 4) {
+      errors.password = "Password must contain at least 4 character(s)";
+    }
+
+    if (
+      errors.password === undefined &&
+      errors.username === undefined &&
+      username.length !== 0 &&
+      password.length !== 0
+    ) {
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
+
+    const timeoutId = setTimeout(() => setErrors(errors), 500);
+    return () => clearTimeout(timeoutId);
   };
 
   useEffect(validateForm, [username, password]);
@@ -48,7 +51,7 @@ export default function Login({
         <h1 className="text-[32px] font-semibold mb-5">Selamat datang</h1>
         {searchParams.register === "success" && (
           <div className="w-[400px] mb-5 p-4 rounded-xl bg-green-100 border border-green-300">
-            <span className='text-sm'>Register success. Silahkan login.</span>
+            <span className="text-sm">Register success. Silahkan login.</span>
           </div>
         )}
         <div className="flex flex-col justify-center items-center w-[400px] mb-5 p-10 rounded-xl bg-white border border-gray-400">
@@ -63,9 +66,7 @@ export default function Login({
                 name="username"
                 className="w-full h-8 p-2 border border-gray-300 rounded-md"
                 onChange={(e) => {
-                  setTimeout(() => {
-                    setUsername(e.target.value);
-                  }, 1500);
+                  setUsername(e.target.value);
                 }}
               />
               {errors.username && (
@@ -81,14 +82,50 @@ export default function Login({
                 type="password"
                 name="password"
                 className="w-full h-8 p-2 border border-gray-300 rounded-md"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
               />
             </div>
-            <Submit />
+            <Submit valid={isValid} />
+            {state && (
+              <span className="mt-3 text-red-400 text-center block text-sm">
+                {state}
+              </span>
+            )}
           </form>
         </div>
         <h1 className="text-md font-semibold mb-5">Open Apotek v0.1</h1>
         {state && <h1 className="text-md font-semibold mb-5">{state}</h1>}
       </div>
+    </div>
+  );
+}
+
+function Submit({ valid }: { valid: boolean }) {
+  const { pending } = useFormStatus();
+  const isDisabled = () => {
+    return !valid;
+  };
+
+  return (
+    <div>
+      {isDisabled() ? (
+        <button
+          type="submit"
+          className="text-center bg-gray-400 text-white p-2 w-full rounded-md"
+          disabled
+        >
+          Masuk
+        </button>
+      ) : (
+        <button
+          type="submit"
+          className="text-center bg-black text-white p-2 w-full rounded-md"
+        >
+          {pending ? "Loading..." : "Masuk"}
+        </button>
+      )}
     </div>
   );
 }
