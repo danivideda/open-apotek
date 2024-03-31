@@ -1,0 +1,1 @@
+ALTER TABLE users ADD `jwt_refresh_token` text;

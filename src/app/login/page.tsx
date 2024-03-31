@@ -19,7 +19,11 @@ function Submit() {
   );
 }
 
-export default function Login() {
+export default function Login({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   type errors = { username: string; password: string };
   const [state, formAction] = useFormState(login, null);
   const [username, setUsername] = useState("");
@@ -42,6 +46,11 @@ export default function Login() {
     <div className="h-[100vh] bg-gray-100">
       <div className="flex flex-col justify-center items-center h-full w-full">
         <h1 className="text-[32px] font-semibold mb-5">Selamat datang</h1>
+        {searchParams.register === "success" && (
+          <div className="w-[400px] mb-5 p-4 rounded-xl bg-green-100 border border-green-300">
+            <span className='text-sm'>Register success. Silahkan login.</span>
+          </div>
+        )}
         <div className="flex flex-col justify-center items-center w-[400px] mb-5 p-10 rounded-xl bg-white border border-gray-400">
           <form action={formAction} className="w-full">
             <div className="mb-5">
