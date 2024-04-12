@@ -44,6 +44,5 @@ export async function register(prevState: any, formData: FormData) {
     console.log(error);
   }
 
-  NextResponse.json({ message: "success lurrrr" });
   redirect("/login?register=success");
 }

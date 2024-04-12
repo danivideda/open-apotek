@@ -2,23 +2,26 @@ import { db } from "@/db";
 import { users } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
 import * as argon2 from "argon2";
+import jwt from "jsonwebtoken";
 
 export async function handleAuth(
   username: string,
   password: string
-): Promise<{
-  success: boolean;
-  message: string;
-  payload?: {
-    jwt_access: string;
-    jwt_refresh: string;
-  };
-}> {
-  // await db.insert(users).values({
-  //   username: username,
-  //   passwordHash: password,
-  // });
-
+): Promise<
+  | {
+      success: true;
+      message: string;
+      payload: {
+        jwt_access: string;
+        jwt_refresh: string;
+        expires: Date
+      };
+    }
+  | {
+      success: false;
+      error: string;
+    }
+> {
   try {
     const response = await db
       .select()
@@ -28,34 +31,56 @@ export async function handleAuth(
     if (response.length === 0) {
       return {
         success: false,
-        message: "User not found.",
+        error: "User not found.",
       };
     }
 
-    const passwordIsValid = await argon2.verify(
+    const isPasswordValid = await argon2.verify(
       response[0].passwordHash,
       password
     );
-    if (!passwordIsValid) {
+    if (!isPasswordValid) {
       return {
         success: false,
-        message: "Wrong password dumbass.",
+        error: "Wrong password.",
       };
     }
+
+    const jwt_payload = {
+      username: response[0].username,
+    };
+
+    const accessTokenTTL = 10 * 60;
+    const refreshTokenTTL = 12 * 60 * 60;
+
+    const jwt_access_token = jwt.sign(
+      jwt_payload,
+      process.env.JWT_ACCESS_SECRET!,
+      { expiresIn: accessTokenTTL }
+    );
+
+    const jwt_refresh_token = jwt.sign(
+      jwt_payload,
+      process.env.JWT_REFRESH_SECRET!,
+      { expiresIn: refreshTokenTTL }
+    );
+
+    const expires = new Date(Date.now() + refreshTokenTTL);
 
     return {
       success: true,
       message: "Successfully logged in.",
       payload: {
-        jwt_access: "blabla",
-        jwt_refresh: "blabla",
+        jwt_access: jwt_access_token,
+        jwt_refresh: jwt_refresh_token,
+        expires
       },
     };
   } catch (e) {
     console.log(e);
     return {
       success: false,
-      message: "Internal server error.",
+      error: "Internal server error.",
     };
   }
 }

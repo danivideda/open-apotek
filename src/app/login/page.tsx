@@ -3,14 +3,13 @@ import { useFormState, useFormStatus } from "react-dom";
 import { login } from "./actions";
 import { useEffect, useState } from "react";
 
-type errors = { username: string; password: string };
-
 export default function Login({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   type errors = { username: string; password: string };
+
   const [state, formAction] = useFormState(login, null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -96,7 +95,6 @@ export default function Login({
           </form>
         </div>
         <h1 className="text-md font-semibold mb-5">Open Apotek v0.1</h1>
-        {state && <h1 className="text-md font-semibold mb-5">{state}</h1>}
       </div>
     </div>
   );
