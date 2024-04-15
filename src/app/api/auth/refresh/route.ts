@@ -2,12 +2,18 @@ import { db } from "@/db";
 import { users } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
 import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import {
+  ResponseStatus,
+  createResponse,
+  generateAccessToken,
+} from "@/app/helpers";
+import { refreshTokenCookieConfig } from "@/app/helpers/auth";
 
 export async function GET(request: NextRequest) {
   const sessionCookie = request.cookies.get("session");
   if (!sessionCookie) {
-    return NextResponse.json({ message: "No user session" }, { status: 400 });
+    return createResponse(ResponseStatus.BadRequest, "No user session");
   }
 
   try {
@@ -19,28 +25,18 @@ export async function GET(request: NextRequest) {
       await db.select().from(users).where(eq(users.username, username))
     )[0].jwtRefreshToken;
     if (sessionToken !== refreshTokenFromDB) {
-      const response = NextResponse.json(null);
-      response.cookies.delete("session");
-
-      return response;
+      const response = createResponse(
+        ResponseStatus.BadRequest,
+        "Invalid Request"
+      );
+      response.cookies.delete(refreshTokenCookieConfig());
     }
 
-    if (sessionToken !== refreshTokenFromDB) {
-      const response = NextResponse.json({
-        data: {
-          access_token: jwt.sign({ username }, process.env.JWT_ACCESS_SECRET!, {
-            expiresIn: "5m",
-          }),
-        },
-      });
+    const accessToken = generateAccessToken(username);
 
-      return response;
-    } else {
-      const response = NextResponse.json(null);
-      response.cookies.delete("session");
-
-      return response;
-    }
+    return createResponse(ResponseStatus.Ok, "Generated new access token", {
+      access_token: accessToken,
+    });
   } catch (error) {
     if (error instanceof TokenExpiredError) {
       console.log(error.message, "at", error.expiredAt);
@@ -48,15 +44,11 @@ export async function GET(request: NextRequest) {
       console.log((error as Error).message);
     }
 
-    const response = NextResponse.json(
-      { message: "Session is not valid" },
-      { status: 400 }
+    const response = createResponse(
+      ResponseStatus.BadRequest,
+      "Session is not valid"
     );
-    response.cookies.delete({
-      name: "session",
-      httpOnly: true,
-      path: "/api/auth/refresh",
-    });
+    response.cookies.delete(refreshTokenCookieConfig());
 
     return response;
   }

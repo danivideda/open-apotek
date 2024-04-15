@@ -1,5 +1,5 @@
 import type { Config } from "drizzle-kit";
-import "dotenv/config"
+import "dotenv/config";
 
 export default {
   schema: "./src/db/schema/",

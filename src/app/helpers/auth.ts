@@ -3,6 +3,31 @@ import { users } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
 import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
+import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+
+export function refreshTokenCookieConfig(value: string): ResponseCookie;
+export function refreshTokenCookieConfig(): Omit<
+  ResponseCookie,
+  "value" | "expires"
+>;
+export function refreshTokenCookieConfig(
+  value?: string
+): ResponseCookie | Omit<ResponseCookie, "value" | "expires"> {
+  if (value) {
+    return {
+      name: "session",
+      value,
+      httpOnly: true,
+      path: "/api/auth/refresh",
+    };
+  } else {
+    return {
+      name: "session",
+      httpOnly: true,
+      path: "/api/auth/refresh",
+    };
+  }
+}
 
 export async function handleAuth(
   username: string,
@@ -14,7 +39,7 @@ export async function handleAuth(
       payload: {
         jwt_access: string;
         jwt_refresh: string;
-        expires: Date
+        expires: Date;
       };
     }
   | {
@@ -56,13 +81,17 @@ export async function handleAuth(
     const jwt_access_token = jwt.sign(
       jwt_payload,
       process.env.JWT_ACCESS_SECRET!,
-      { expiresIn: accessTokenTTL }
+      {
+        expiresIn: accessTokenTTL,
+      }
     );
 
     const jwt_refresh_token = jwt.sign(
       jwt_payload,
       process.env.JWT_REFRESH_SECRET!,
-      { expiresIn: refreshTokenTTL }
+      {
+        expiresIn: refreshTokenTTL,
+      }
     );
 
     const expires = new Date(Date.now() + refreshTokenTTL);
@@ -73,7 +102,7 @@ export async function handleAuth(
       payload: {
         jwt_access: jwt_access_token,
         jwt_refresh: jwt_refresh_token,
-        expires
+        expires,
       },
     };
   } catch (e) {
