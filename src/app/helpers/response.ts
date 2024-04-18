@@ -5,6 +5,7 @@ export enum ResponseStatus {
   Created = 201,
   BadRequest = 400,
   Unauthorized = 401,
+  InternalError = 500,
 }
 
 export function createResponse(
