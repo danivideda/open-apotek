@@ -33,10 +33,7 @@ export async function login(prevState: any, formData: FormData) {
       .where(eq(users.username, username));
 
     if (response.length === 0) {
-      return {
-        success: false,
-        error: "User not found.",
-      };
+      return "User not found.";
     }
 
     const isPasswordValid = await argon2.verify(
@@ -44,23 +41,15 @@ export async function login(prevState: any, formData: FormData) {
       password
     );
     if (!isPasswordValid) {
-      return {
-        success: false,
-        error: "Wrong password.",
-      };
+      return "Wrong password.";
     }
 
     const session_expiry = 12 * 60 * 60;
     const expires = new Date(Date.now() + session_expiry);
-
     const session_token = jwt.sign(
-      {
-        username: response[0].username,
-      },
+      { username },
       process.env.JWT_REFRESH_SECRET!,
-      {
-        expiresIn: session_expiry,
-      }
+      { expiresIn: session_expiry }
     );
 
     await db
@@ -69,10 +58,11 @@ export async function login(prevState: any, formData: FormData) {
       .where(eq(users.username, username));
 
     cookies().set(sessionTokenCookieConfig({ value: session_token, expires }));
+    // return "redirect";
   } catch (e) {
     console.log(e);
     return "Internal server error";
   }
 
-  redirect("/");
+  // redirect("/dashboard");
 }

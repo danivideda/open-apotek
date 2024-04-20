@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
   const response = createResponse(ResponseStatus.Ok, "Successfully logged in", {
     access_token: accessToken,
   });
-  response.cookies.set(sessionTokenCookieConfig(refreshToken));
+  response.cookies.set(sessionTokenCookieConfig({value: refreshToken }));
 
   return response;
 }

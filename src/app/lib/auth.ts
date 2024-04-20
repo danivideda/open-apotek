@@ -3,7 +3,7 @@ import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export function sessionTokenCookieConfig(options: {
   value: string;
-  expires: Date;
+  expires?: Date;
 }): ResponseCookie;
 export function sessionTokenCookieConfig(): Omit<
   ResponseCookie,
@@ -11,7 +11,7 @@ export function sessionTokenCookieConfig(): Omit<
 >;
 export function sessionTokenCookieConfig(options?: {
   value: string;
-  expires: Date;
+  expires?: Date | undefined;
 }): ResponseCookie | Omit<ResponseCookie, "value" | "expires"> {
   if (options) {
     return {
@@ -20,7 +20,7 @@ export function sessionTokenCookieConfig(options?: {
       httpOnly: true,
       sameSite: "strict",
       path: "/",
-      expires: options.expires,
+      expires: options.expires ?? new Date(Date.now()),
     };
   } else {
     return {
