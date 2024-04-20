@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import * as argon2 from "argon2";
 import { NextRequest, NextResponse } from "next/server";
-import { ResponseStatus, artificialDelay, createResponse } from "@/app/helpers";
+import { ResponseStatus, artificialDelay, createResponse } from "@/app/lib";
 
 export async function POST(request: NextRequest) {
   await artificialDelay(500);

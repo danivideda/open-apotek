@@ -9,8 +9,8 @@ import {
   createResponse,
   generateAccessToken,
   generateRefreshToken,
-} from "@/app/helpers";
-import { refreshTokenCookieConfig } from "@/app/helpers/auth";
+} from "@/app/lib";
+import { sessionTokenCookieConfig } from "@/app/lib/auth";
 
 export async function POST(request: NextRequest) {
   const reqBodySchema = z.object({
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
   const response = createResponse(ResponseStatus.Ok, "Successfully logged in", {
     access_token: accessToken,
   });
-  response.cookies.set(refreshTokenCookieConfig(refreshToken));
+  response.cookies.set(sessionTokenCookieConfig(refreshToken));
 
   return response;
 }

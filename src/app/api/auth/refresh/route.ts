@@ -7,8 +7,8 @@ import {
   ResponseStatus,
   createResponse,
   generateAccessToken,
-} from "@/app/helpers";
-import { refreshTokenCookieConfig } from "@/app/helpers/auth";
+} from "@/app/lib";
+import { sessionTokenCookieConfig } from "@/app/lib/auth";
 
 export async function GET(request: NextRequest) {
   const sessionCookie = request.cookies.get("session");
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
         ResponseStatus.BadRequest,
         "Invalid Request"
       );
-      response.cookies.delete(refreshTokenCookieConfig());
+      response.cookies.delete(sessionTokenCookieConfig());
     }
 
     const accessToken = generateAccessToken(username);
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       ResponseStatus.BadRequest,
       "Session is not valid"
     );
-    response.cookies.delete(refreshTokenCookieConfig());
+    response.cookies.delete(sessionTokenCookieConfig());
 
     return response;
   }

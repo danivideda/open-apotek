@@ -82,7 +82,7 @@ export default function Login() {
                 <span className="text-red-400 text-sm">{errors.password}</span>
               )}
             </div>
-            <Submit valid={isValid} />
+            <SubmitButton valid={isValid} />
             {state && (
               <span className="mt-3 text-red-400 text-center block text-sm">
                 {state}
@@ -96,7 +96,7 @@ export default function Login() {
   );
 }
 
-function Submit({ valid }: { valid: boolean }) {
+function SubmitButton({ valid }: { valid: boolean }) {
   const { pending } = useFormStatus();
   const isDisabled = () => {
     return !valid;

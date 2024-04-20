@@ -6,8 +6,7 @@ import { redirect } from "next/navigation";
 import * as argon2 from "argon2";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { NextResponse } from "next/server";
-import { artificialDelay } from '../helpers';
+import { artificialDelay } from "../lib";
 
 export async function register(prevState: any, formData: FormData) {
   await artificialDelay(500);
@@ -17,17 +16,15 @@ export async function register(prevState: any, formData: FormData) {
     password: z.string().min(4),
   });
 
-  const formDataResponse = {
+  const validatedFields = schema.safeParse({
     username: formData.get("username"),
     password: formData.get("password"),
-  };
-
-  const zodParsed = schema.safeParse(formDataResponse);
-  if (!zodParsed.success) {
+  });
+  if (!validatedFields.success) {
     return "Please check again";
   }
 
-  const { username, password } = zodParsed.data;
+  const { username, password } = validatedFields.data;
   const userExist = await db
     .select()
     .from(users)
