@@ -1,4 +1,5 @@
 "use client";
+
 import { useFormState, useFormStatus } from "react-dom";
 import { login } from "./actions";
 import { useEffect, useState } from "react";
@@ -37,6 +38,8 @@ export default function Login({
     } else {
       setIsValid(false);
     }
+
+    const onSubmit = (value: any) => {};
 
     const timeoutId = setTimeout(() => setErrors(errors), 500);
     return () => clearTimeout(timeoutId);
