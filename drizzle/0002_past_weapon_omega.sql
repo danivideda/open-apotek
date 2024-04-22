@@ -1,0 +1,1 @@
+ALTER TABLE `users` RENAME COLUMN `jwt_refresh_token` TO `session_token`;

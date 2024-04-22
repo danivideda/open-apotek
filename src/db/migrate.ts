@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { db, sqlite } from ".";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 

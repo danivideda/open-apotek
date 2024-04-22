@@ -53,7 +53,7 @@ export async function login(prevState: any, formData: FormData) {
 
     await db
       .update(users)
-      .set({ jwtRefreshToken: sessionToken })
+      .set({ sessionToken })
       .where(eq(users.username, username));
 
     cookies().set(sessionTokenCookieConfig({ value: sessionToken, expires }));

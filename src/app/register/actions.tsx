@@ -9,7 +9,7 @@ import { z } from "zod";
 import { artificialDelay } from "../../lib";
 
 export async function register(prevState: any, formData: FormData) {
-  await artificialDelay(500);
+  // await artificialDelay(500);
 
   const schema = z.object({
     username: z.string().min(4),

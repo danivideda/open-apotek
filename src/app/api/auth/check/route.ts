@@ -21,10 +21,15 @@ export async function GET(request: NextRequest) {
       new TextEncoder().encode(process.env.JWT_REFRESH_SECRET!)
     );
     const username = payload.username as string;
-    const sessionTokenFromDB = (
-      await db.select().from(users).where(eq(users.username, username))
-    )[0].jwtRefreshToken;
+    const usersQuery = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
+    if (usersQuery.length === 0) {
+      return createResponse(ResponseStatus.BadRequest, "User not found");
+    }
 
+    const sessionTokenFromDB = usersQuery[0].sessionToken;
     if (sessionToken !== sessionTokenFromDB) {
       return createResponse(ResponseStatus.BadRequest, "Session doesn't match");
     }
