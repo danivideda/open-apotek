@@ -1,14 +1,14 @@
 "use server";
 
 import { z } from "zod";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { cookies, headers } from "next/headers";
 import { db } from "@/db";
 import { users } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
 import * as argon2 from "argon2";
-import * as jwt from "jsonwebtoken";
+import * as jose from "jose";
 import { sessionTokenCookieConfig } from "../lib";
+import { redirect } from "next/navigation";
 
 export async function login(prevState: any, formData: FormData) {
   const schema = z.object({
@@ -44,25 +44,22 @@ export async function login(prevState: any, formData: FormData) {
       return "Wrong password.";
     }
 
-    const session_expiry = 12 * 60 * 60;
-    const expires = new Date(Date.now() + session_expiry);
-    const session_token = jwt.sign(
-      { username },
-      process.env.JWT_REFRESH_SECRET!,
-      { expiresIn: session_expiry }
-    );
+    const sessionTTL = 12 * 60 * 60 * 1000;
+    const expires = new Date(Date.now() + sessionTTL);
+    const sessionToken = await new jose.SignJWT({ username })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime(expires)
+      .sign(new TextEncoder().encode(process.env.JWT_REFRESH_SECRET!));
 
     await db
       .update(users)
-      .set({ jwtRefreshToken: session_token })
+      .set({ jwtRefreshToken: sessionToken })
       .where(eq(users.username, username));
 
-    cookies().set(sessionTokenCookieConfig({ value: session_token, expires }));
-    // return "redirect";
+    cookies().set(sessionTokenCookieConfig({ value: sessionToken, expires }));
   } catch (e) {
     console.log(e);
     return "Internal server error";
   }
-
-  // redirect("/dashboard");
+  redirect("/dashboard");
 }

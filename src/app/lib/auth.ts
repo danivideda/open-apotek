@@ -19,6 +19,7 @@ export function sessionTokenCookieConfig(options?: {
       value: options.value,
       httpOnly: true,
       sameSite: "strict",
+      // domain: "localhost:3000",
       path: "/",
       expires: options.expires ?? new Date(Date.now()),
     };
