@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import * as argon2 from "argon2";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { artificialDelay } from "../lib";
+import { artificialDelay } from "../../lib";
 
 export async function register(prevState: any, formData: FormData) {
   await artificialDelay(500);

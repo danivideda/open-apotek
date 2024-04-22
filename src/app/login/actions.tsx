@@ -7,7 +7,7 @@ import { users } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
 import * as argon2 from "argon2";
 import * as jose from "jose";
-import { sessionTokenCookieConfig } from "../lib";
+import { sessionTokenCookieConfig } from "../../lib";
 import { redirect } from "next/navigation";
 
 export async function login(prevState: any, formData: FormData) {

@@ -3,8 +3,8 @@ import { users } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
 import * as jose from "jose";
 import { NextRequest, NextResponse } from "next/server";
-import { ResponseStatus, createResponse } from "@/app/lib";
-import { sessionTokenCookieConfig } from "@/app/lib/auth";
+import { ResponseStatus, createResponse } from "@/lib";
+import { sessionTokenCookieConfig } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   const sessionToken = request.cookies.get(

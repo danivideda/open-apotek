@@ -1,4 +1,3 @@
-import "server-only";
 import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export function sessionTokenCookieConfig(options: {

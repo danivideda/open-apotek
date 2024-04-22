@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as jose from "jose";
-import { ResponseStatus, sessionTokenCookieConfig } from "./app/lib";
+import { ResponseStatus, sessionTokenCookieConfig } from "./lib";
 
 export async function middleware(request: NextRequest) {
   console.log("MIDDLEWARE Path:", request.nextUrl.pathname);
