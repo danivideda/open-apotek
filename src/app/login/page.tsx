@@ -72,7 +72,7 @@ export default function Login({
                 }}
               />
               {errors.username && (
-                <span className="text-red-400">{errors.username}</span>
+                <span className="text-red-400 text-sm">{errors.username}</span>
               )}
             </div>
             <div className="mb-5">
