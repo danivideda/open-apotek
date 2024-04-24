@@ -2,6 +2,7 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { register } from "./actions";
 import { useEffect, useState } from "react";
+import SubmitButton from '@/components/button-submit';
 
 type errors = { username: string; password: string };
 
@@ -82,7 +83,7 @@ export default function Login() {
                 <span className="text-red-400 text-sm">{errors.password}</span>
               )}
             </div>
-            <SubmitButton valid={isValid} />
+            <SubmitButton valid={isValid} text='Daftar' />
             {state && (
               <span className="mt-3 text-red-400 text-center block text-sm">
                 {state}
@@ -96,30 +97,3 @@ export default function Login() {
   );
 }
 
-function SubmitButton({ valid }: { valid: boolean }) {
-  const { pending } = useFormStatus();
-  const isDisabled = () => {
-    return !valid;
-  };
-
-  return (
-    <div>
-      {isDisabled() ? (
-        <button
-          type="submit"
-          className="text-center bg-gray-400 text-white p-2 w-full rounded-md"
-          disabled
-        >
-          Daftar
-        </button>
-      ) : (
-        <button
-          type="submit"
-          className="text-center bg-black text-white p-2 w-full rounded-md"
-        >
-          {pending ? "Mendaftar..." : "Daftar"}
-        </button>
-      )}
-    </div>
-  );
-}

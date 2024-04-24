@@ -3,6 +3,7 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { login } from "./actions";
 import { useEffect, useState } from "react";
+import SubmitButton from '@/components/button-submit';
 
 export default function Login({
   searchParams,
@@ -89,7 +90,7 @@ export default function Login({
                 }}
               />
             </div>
-            <Submit valid={isValid} />
+            <SubmitButton valid={isValid} text='Masuk' />
             {state && (
               <span className="mt-3 text-red-400 text-center block text-sm">
                 {state}
@@ -122,7 +123,8 @@ function Submit({ valid }: { valid: boolean }) {
       ) : (
         <button
           type="submit"
-          className="text-center bg-black text-white p-2 w-full rounded-md"
+          // className="text-center bg-black text-white p-2 w-full rounded-md"
+          className="sqs-block-button-element"
         >
           {pending ? "Loading..." : "Masuk"}
         </button>

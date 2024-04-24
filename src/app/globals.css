@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.sqs-block-button-element {
+  box-shadow: none;
+  border: 2px solid #000000 !important;
+  transition: all ease-in-out 0.1s !important;
+  padding: 5px;
+}
+
+.sqs-block-button-element:hover {
+  box-shadow: 5px 5px #000000;
+  transform: translateY(-5px) translateX(-5px) !important;
+  transition: all ease-in-out 0.2s;
+  opacity: 1 !important;
+}
+.sqs-block-button-element:active {
+  box-shadow: none;
+  border: 2px solid #000000 !important;
+  transform: translateY(0px) translateX(0px) !important;
+  transition: all !important;
+  padding: 5px;
+}
